@@ -199,6 +199,48 @@ FROM CTE
 
 
 
+--Method 3
+
+
+
+;WITH CTE
+AS
+(
+select *,
+    SUBSTRING(ContactName, 1, CHARINDEX(' ', ContactName) - 1) as firstname , 
+    SUBSTRING(ContactName, CHARINDEX(' ', ContactName) + 1, LEN(ContactName)) as secondname 
+from Suppliers
+),
+CTE2
+AS
+(
+select *,case when secondname like '% %' then
+   
+   SUBSTRING(secondname, CHARINDEX(' ', secondname) + 1, LEN(secondname))
+   else ''
+   end as thirdname
+from CTE
+),
+
+CTE3
+AS
+(
+select *,case when thirdname like '% %' then
+ 
+   SUBSTRING(thirdname, CHARINDEX(' ', thirdname) + 1, LEN(thirdname))
+   else ''
+   end as fourthname
+from CTE2
+)
+
+SELECT ContactName ,SUBSTRING(CTE3.firstname, 1, 1 ) + SUBSTRING(CTE3.secondname, 1, 1 ) + SUBSTRING(CTE3.thirdname, 1, 1 ) + SUBSTRING(CTE3.fourthname, 1, 1 ) SHORTNAME
+FROM CTE3
+ORDER BY SHORTNAME
+
+
+
+
+
 
 
 --13.	Display the Delivery time (in days) for each order and sort it by delivery day.
